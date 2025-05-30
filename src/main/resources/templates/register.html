@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+</head>
+<body>
+<h1>Регистрация</h1>
+
+<form id="registerForm">
+    <div>
+        <label>Имя пользователя:</label>
+        <input type="text" id="username" name="username" required>
+    </div>
+    <br>
+    <div>
+        <label>Пароль:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <br>
+    <button type="submit">Зарегистрироваться</button>
+</form>
+
+<br>
+<p><a href="/login">Уже есть аккаунт? Войти</a></p>
+
+<div id="message"></div>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                document.getElementById('message').innerHTML = '<p style="color: green;">Успешная регистрация!</p>';
+                setTimeout(() => {
+                    window.location.href = data.redirectUrl || '/dashboard';
+                }, 1000);
+            } else {
+                document.getElementById('message').innerHTML = '<p style="color: red;">' + (data.message || 'Ошибка регистрации') + '</p>';
+            }
+        } catch (error) {
+            document.getElementById('message').innerHTML = '<p style="color: red;">Ошибка соединения</p>';
+        }
+    });
+</script>
+</body>
+</html>
