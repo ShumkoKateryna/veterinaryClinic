@@ -2,8 +2,9 @@
 <configuration>
 
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <!-- Изменяем порт на 5044 для TCP логов -->
     <property name="LOGSTASH_HOST" value="logstash" />
-    <property name="LOGSTASH_PORT" value="5000" />
+    <property name="LOGSTASH_PORT" value="5044" />
 
     <!-- Appender для Logstash -->
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
