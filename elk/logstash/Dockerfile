@@ -7,7 +7,7 @@ COPY logstash.yml /usr/share/logstash/config/logstash.yml
   
   # Настройки для Render
 ENV LS_JAVA_OPTS="-Xms256m -Xmx512m"
-ENV ELASTICSEARCH_HOST=your-elasticsearch-service-url:9200
+ENV ELASTICSEARCH_HOST=https://wqq66uwm8s:fdb9a8mad5@onpu-search-4730339165.eu-central-1.bonsaisearch.net:443
 
 EXPOSE 5044 8080 9600
 
