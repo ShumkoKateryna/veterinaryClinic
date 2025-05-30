@@ -1,27 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <!-- Изменяем порт на 5044 для TCP логов -->
-    <property name="LOGSTASH_HOST" value="logstash" />
-    <property name="LOGSTASH_PORT" value="5044" />
-
-    <!-- Appender для Logstash -->
-    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>${LOGSTASH_HOST}:${LOGSTASH_PORT}</destination>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    <appender name="ELASTIC" class="com.ri.vetclinic.config.ElasticAppender">
+        <elasticUrl>https://onpu-search-4730339165.eu-central-1.bonsaisearch.net:443/your-index/_doc</elasticUrl>
+        <username>wqq66uwm8s</username>
+        <password>fdb9a8mad5</password>
     </appender>
-
-    <!-- Консоль (опціонально) -->
-    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
     <root level="INFO">
-        <appender-ref ref="LOGSTASH"/>
-        <appender-ref ref="Console"/>
+        <appender-ref ref="ELASTIC" />
     </root>
 
 </configuration>
