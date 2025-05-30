@@ -1,14 +1,14 @@
 FROM docker.elastic.co/logstash/logstash:7.10.2
 
-
-
 COPY logstash.conf /usr/share/logstash/pipeline/logstash.conf
 
-# Оптимізація пам’яті
+# Включаем мониторинг API
 ENV LS_JAVA_OPTS="-Xms256m -Xmx512m"
+ENV http.host="0.0.0.0"
+ENV http.port=9600
 
-# Відкриті порти
-EXPOSE 5044 8080 514 5000 9600
+# Порт 8080 будет основным для Render
+EXPOSE 8080
+EXPOSE 5000 9600
 
-# Запуск Logstash
 CMD ["/usr/share/logstash/bin/logstash"]
