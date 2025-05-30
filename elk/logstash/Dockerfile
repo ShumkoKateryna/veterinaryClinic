@@ -4,11 +4,9 @@ COPY logstash.conf /usr/share/logstash/pipeline/logstash.conf
 
 # Включаем мониторинг API
 ENV LS_JAVA_OPTS="-Xms256m -Xmx512m"
-ENV http.host="0.0.0.0"
-ENV http.port=9600
+ENV SERVER_HOST=0.0.0.0
+ENV SERVER_PORT=5000
 
-# Порт 8080 будет основным для Render
-EXPOSE 8080
 EXPOSE 5000 9600
 
 CMD ["/usr/share/logstash/bin/logstash"]
