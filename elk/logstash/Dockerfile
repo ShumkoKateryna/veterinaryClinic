@@ -4,6 +4,8 @@ COPY logstash.conf /usr/share/logstash/pipeline/logstash.conf
 
 ENV LS_JAVA_OPTS="-Xms256m -Xmx512m"
 
+ENV PORT=5000
+
 EXPOSE 5000
 
 CMD ["/usr/share/logstash/bin/logstash"]
