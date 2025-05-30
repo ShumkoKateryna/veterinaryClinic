@@ -14,6 +14,7 @@ import org.apache.http.impl.client.HttpClients;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
 
@@ -77,7 +78,7 @@ public class ElasticAppender extends AppenderBase<ILoggingEvent> {
         public String message;
 
         public LogEntry(ILoggingEvent event) {
-            this.timestamp = new Date(event.getTimeStamp()).toString();
+            this.timestamp = Instant.ofEpochMilli(event.getTimeStamp()).toString();
             this.level = event.getLevel().toString();
             this.thread = event.getThreadName();
             this.logger = event.getLoggerName();

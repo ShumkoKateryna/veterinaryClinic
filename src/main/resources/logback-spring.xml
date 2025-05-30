@@ -1,7 +1,7 @@
 <configuration>
 
     <appender name="ELASTIC" class="com.ri.vetclinic.config.ElasticAppender">
-        <elasticUrl>https://onpu-search-4730339165.eu-central-1.bonsaisearch.net:443/your-index/_doc</elasticUrl>
+        <elasticUrl>https://onpu-search-4730339165.eu-central-1.bonsaisearch.net:443/spring-logs-2025.05.30/_doc</elasticUrl>
         <username>wqq66uwm8s</username>
         <password>fdb9a8mad5</password>
     </appender>
