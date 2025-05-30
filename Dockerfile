@@ -1,26 +1,11 @@
-# Використання офіційного образу Maven для білду
-FROM maven:3.9.6-eclipse-temurin-17 AS build
-
-# Встановлюємо робочу директорію всередині контейнера
+FROM maven:3.9.5-eclipse-temurin-21 AS build
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests -Dspring.profiles.active=build
 
-# Копіюємо весь код у контейнер
-COPY . .
-
-# Виконуємо білд Spring Boot-додатку
-RUN mvn clean package -DskipTests
-
-# Використання легкого OpenJDK для фінального контейнера
-FROM eclipse-temurin:17-jdk-jammy
-
-# Встановлюємо робочу директорію
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
-
-# Копіюємо JAR-файл із попереднього контейнера
 COPY --from=build /app/target/*.jar app.jar
-
-# Відкриваємо порт (Render автоматично визначає його)
 EXPOSE 8080
-
-# Запускаємо Spring Boot-додаток
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java -jar app.jar"]
