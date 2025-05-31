@@ -120,24 +120,22 @@ public class AuthenticationController {
             return "redirect:/dashboard";
     }
     @PostMapping("/register")
-    public ResponseEntity<?> registerSession(@RequestBody LoginDTO loginDTO,
-                                             HttpServletRequest request) {
+    public String registerForm(@RequestParam String username,
+                               @RequestParam String password,
+                               HttpServletRequest request) {
         try {
             try {
-                vetUserService.loadUserByUsername(loginDTO.getUsername());
-                Map<String, Object> responseBody = new HashMap<>();
-                responseBody.put("success", false);
-                responseBody.put("message", "User already exists");
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(responseBody);
+                vetUserService.loadUserByUsername(username);
+                request.setAttribute("message", "User already exists");
+                return "register";
             } catch (UsernameNotFoundException e) {
+                // ок
             }
-            vetUserService.register(loginDTO.getUsername(), loginDTO.getPassword());
+
+            vetUserService.register(username, password);
 
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginDTO.getUsername(),
-                            loginDTO.getPassword()
-                    )
+                    new UsernamePasswordAuthenticationToken(username, password)
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -145,22 +143,15 @@ public class AuthenticationController {
             HttpSession session = request.getSession(true);
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                     SecurityContextHolder.getContext());
-            session.setAttribute("username", loginDTO.getUsername());
+            session.setAttribute("username", username);
             session.setAttribute("loginTime", System.currentTimeMillis());
 
-            Map<String, Object> responseBody = new HashMap<>();
-            responseBody.put("success", true);
-            responseBody.put("message", "Registration successful");
-            responseBody.put("username", loginDTO.getUsername());
-            responseBody.put("redirectUrl", "/dashboard");
-
-            return ResponseEntity.ok(responseBody);
+            return "redirect:/dashboard";
 
         } catch (Exception e) {
-            Map<String, Object> responseBody = new HashMap<>();
-            responseBody.put("success", false);
-            responseBody.put("message", "Registration failed: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
+            request.setAttribute("message", "Registration failed: " + e.getMessage());
+            return "register";
         }
     }
+
 }
