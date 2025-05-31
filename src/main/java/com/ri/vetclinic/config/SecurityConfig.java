@@ -35,20 +35,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
-
-                // Настройка авторизации для разных путей
                 .authorizeHttpRequests(authz -> authz
-                        // Публичные эндпоинты
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
-
                         .requestMatchers("/api/**").authenticated()
-
-
                         .anyRequest().authenticated()
                 )
-
-
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/perform_login")
@@ -56,7 +48,6 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
-
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")
@@ -64,16 +55,12 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
-
-                // Настройка управления сессиями
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                         .maximumSessions(1)
                         .maxSessionsPreventsLogin(false)
                         .sessionRegistry(sessionRegistry())
                 )
-
-                // Обработка исключений для API (JWT)
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
                             if (request.getRequestURI().startsWith("/api/")) {
@@ -95,7 +82,6 @@ public class SecurityConfig {
                         })
                 );
 
-        // Добавляем JWT фильтр перед UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

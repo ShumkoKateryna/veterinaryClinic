@@ -29,7 +29,6 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
 
-        // Пропускаем не-API запросы
         if (!request.getRequestURI().startsWith("/api/")) {
             chain.doFilter(request, response);
             return;
@@ -39,7 +38,6 @@ public class JwtFilter extends OncePerRequestFilter {
         String username = null;
         String accessToken = null;
 
-        // 1. Сначала пытаемся получить токен из Authorization header
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             accessToken = requestTokenHeader.substring(7);
             try {
@@ -49,11 +47,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 logger.error("Unable to get JWT Token from Authorization header");
             } catch (ExpiredJwtException e) {
                 logger.error("JWT Token from Authorization header has expired");
-                username = e.getClaims().getSubject(); // Получаем username даже из expired токена
+                username = e.getClaims().getSubject();
             }
         }
 
-        // 2. Если токена нет в header, пытаемся получить из cookies
         if (accessToken == null) {
             accessToken = getTokenFromCookie(request, "accessToken");
             if (accessToken != null) {
@@ -69,21 +66,16 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-        // 3. Если есть username и нет активной аутентификации
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 UserDetails userDetails = vetUserService.loadUserByUsername(username);
 
-                // Проверяем валидность access токена
                 if (accessToken != null && jwtService.validateToken(accessToken, userDetails)) {
-                    // Access токен валидный - устанавливаем аутентификацию
                     setAuthentication(request, userDetails);
                     logger.debug("Authentication set for user: " + username);
                 } else {
-                    // Access токен невалидный, пытаемся использовать refresh токен
                     String refreshToken = getTokenFromCookie(request, "refreshToken");
                     if (refreshToken != null && jwtService.validateToken(refreshToken, userDetails)) {
-                        // Refresh токен валидный - создаём новый access токен
                         String newAccessToken = jwtService.generateAccessToken(username);
 
                         Cookie newAccessCookie = new Cookie("accessToken", newAccessToken);

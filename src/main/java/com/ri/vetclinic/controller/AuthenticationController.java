@@ -62,17 +62,16 @@ public class AuthenticationController {
         Cookie accessCookie = new Cookie("accessToken", accessToken);
         accessCookie.setHttpOnly(true);
         accessCookie.setPath("/");
-        accessCookie.setMaxAge(60 * 15); // 15 minutes
+        accessCookie.setMaxAge(60 * 15);
 
         Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
         refreshCookie.setHttpOnly(true);
         refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(60 * 60 * 24 * 7); // 7 days
+        refreshCookie.setMaxAge(60 * 60 * 24 * 7);
 
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
 
-        // Return a success message or user info instead of the response object
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Login successful");
         responseBody.put("username", userDetails.getUsername());
